@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- <script src="libs/jszip/dist/jszip.min.js"></script> -->
+    <script src="libs/jszip.min.js"></script>
+
+    <!-- <link rel="stylesheet" type="text/css" href="libs/Papaya/release/current/standard/papaya.css" /> -->
+    <link rel="stylesheet" type="text/css" href="libs/papaya.css" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+
+    <!-- <script type="text/javascript" src="libs/Papaya/release/current/standard/papaya.js"></script> -->
+    <script type="text/javascript" src="libs/papaya.js"></script>
+    
+	<!-- <script src='https://cdn.plot.ly/plotly-2.4.2.min.js'></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/danfojs@0.3.3/lib/bundle.min.js"></script> -->
+
+    <!-- <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script> -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css"> -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-alpine.css"> -->
+
+
+    <!-- JS debug start -->
+<!-- 
+    <script type="text/javascript" src="libs/Papaya/src/js/data/sample-image.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/data/talairach-atlas-image.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/data/talairach-atlas.js"></script>
+
+    <script type="text/javascript" src="libs/Papaya/lib/base64-binary.js"></script>
+    <script type="text/javascript" src="libs/Papaya/lib/bowser.js"></script>
+    <script type="text/javascript" src="libs/Papaya/lib/daikon.js"></script>
+    <script type="text/javascript" src="libs/Papaya/lib/nifti-reader.js"></script>
+    <script type="text/javascript" src="libs/Papaya/lib/jquery.js"></script>
+    <script type="text/javascript" src="libs/Papaya/lib/numerics.js"></script>
+    <script type="text/javascript" src="libs/Papaya/lib/pako-inflate.js"></script>
+    <script type="text/javascript" src="libs/Papaya/lib/gl-matrix.js"></script>
+    <script type="text/javascript" src="libs/Papaya/lib/gifti-reader.js"></script>
+    <script type="text/javascript" src="libs/Papaya/lib/GLU.js"></script>
+
+    <script type="text/javascript" src="libs/Papaya/src/js/constants.js"></script>
+
+    <script type="text/javascript" src="libs/Papaya/src/js/utilities/array-utils.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/utilities/math-utils.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/utilities/object-utils.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/utilities/platform-utils.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/utilities/string-utils.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/utilities/url-utils.js"></script>
+
+    <script type="text/javascript" src="libs/Papaya/src/js/core/coordinate.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/core/point.js"></script>
+
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/header.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/imagedata.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/imagedescription.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/imagedimensions.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/imagerange.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/imagetype.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/nifti/header-nifti.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/dicom/header-dicom.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/orientation.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/transform.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/volume.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/voxeldimensions.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/volume/voxelvalue.js"></script>
+
+    <script type="text/javascript" src="libs/Papaya/src/js/surface/surface.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/surface/surface-gifti.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/surface/surface-mango.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/surface/surface-vtk.js"></script>
+
+    <script type="text/javascript" src="libs/Papaya/src/js/ui/dialog.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/ui/menu.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/ui/menuitem.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/ui/menuitemcheckbox.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/ui/menuitemradiobutton.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/ui/menuitemfilechooser.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/ui/menuitemrange.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/ui/menuitemslider.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/ui/menuitemspacer.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/ui/toolbar.js"></script>
+
+    <script type="text/javascript" src="libs/Papaya/src/js/viewer/atlas.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/viewer/colortable.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/viewer/display.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/viewer/preferences.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/viewer/screenslice.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/viewer/screensurface.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/viewer/screenvol.js"></script>
+    <script type="text/javascript" src="libs/Papaya/src/js/viewer/viewer.js"></script>
+
+    <script type="text/javascript" src="libs/Papaya/src/js/main.js"></script> -->
+
+    <!-- JS debug end-->
+
+    <script type="text/javascript" src="main.js"></script>
+
+    <title>Lesion Viewer</title>
+</head>
+
+<body>
+
+    <div id="viewer-container" class="hide">
+    
+        <div id="papaya-containers" class="row">
+
+            <div id="papaya-container0">
+                <div class="papaya"></div>
+            </div>
+            <div id="papaya-container1">
+                <div class="papaya"></div>
+            </div>
+
+        </div>
+
+        <div id="report"></div>
+
+        <div id="clinical_case"></div>
+
+        <div id="answer">
+            <input type="text">
+        </div>
+
+        <div class="navigation">
+            <button id="prev">&#60; Prev</button> <button id="next">Next &#62;</button>
+        </div>
+        
+        <button id="save">Save</button>
+            
+            
+        </div>
+        
+    </div>
+
+    <div id='load buttons'>
+        <div>
+            <label for="load_archive">Ouvrir l'archive:</label> <input type=file id="load_archive" accept="application/zip" onclick="this.value=null;">
+            <!-- or -->
+            <!-- <label for="load_files">Open images:</label> <input type=file multiple id="load_files" accept="application/gzip" onclick="this.value=null;"> -->
+        </div>
+
+        <!-- <div><label for="load_lesions_data">Open lesions data:</label> <input type=file id="load_lesions_data" accept="text/csv"></div> -->
+        <!-- <div><label for="load_task_description">Open task description:</label> <input type=file id="load_task_description" onclick="this.value=null;"></div> -->
+    </div>
+
+    <div id="loader" class="hide">
+
+        <svg version="1.1" id="L3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+            <circle fill="none" stroke="#fff" stroke-width="4" cx="50" cy="50" r="44" style="opacity:0.5;" />
+            <circle fill="none" stroke="#fff" stroke-width="3" cx="8" cy="54" r="6">
+                <animateTransform attributeName="transform" dur="2s" type="rotate" from="0 50 48" to="360 50 52"
+                    repeatCount="indefinite" />
+
+            </circle>
+        </svg>
+
+    </div>
+
+</body>
+
+</html>
