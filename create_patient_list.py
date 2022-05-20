@@ -5,7 +5,7 @@ Path.ls = lambda x: list(x.iterdir())
 import SimpleITK as sitk
 import shutil
 
-task_path = Path('/home/amasson/Data/Conception interface thèse Blandine/')
+task_path = Path('/home/amasson/data/evaluation/new_structure')
 # task_archive_path = task_path.parent / f'{task_path.name}_archive'
 
 # Initialize the fields which will be displayed on the table of the viewer
@@ -28,6 +28,8 @@ total_similar_patients_with_help = total_similar_patients // 2
 
 n = 0
 
+random.seed(0)
+
 # For all patients: extract the patients and add them to the task
 for patient in patients:
     print(patient.name)
@@ -39,8 +41,7 @@ for patient in patients:
     for session_task in [session1_task, session2_task]:
         
         # Load and threshold the ground truth
-        phase_suffix = '2 (Avec aide)' if with_help else '1 (Sans aide)' 
-        phase_path = (patient / 'Phase {phase_suffix}').relative_to(task_path)
+        patient_relative = patient.relative_to(task_path)
 
         patient_name = f'{patient.name}'
         
@@ -49,17 +50,17 @@ for patient in patients:
         #   see the trick to display label images with different colors using the same look-up table (LUT): max is different for the three experts
         # - display indicates if the image will be displayed by default or not
         images = [
-            { 'name': 'time01', 'file': phase_path / 'flair_or1.nii.gz', 'parameters': {'minPercent': 0, 'maxPercent': 1, 'lut': 'Grayscale'}, 'display': True }, 
-            { 'name': 'time02', 'file': phase_path / 'flair_or2.nii.gz', 'parameters': {'minPercent': 0, 'maxPercent': 1, 'lut': 'Grayscale'}, 'display': True }, 
+            { 'name': 'time01', 'file': str(patient_relative / 'flair1.nii.gz'), 'parameters': {'minPercent': 0, 'maxPercent': 1, 'lut': 'Grayscale'}, 'display': True }, 
+            { 'name': 'time02', 'file': str(patient_relative / 'flair2.nii.gz'), 'parameters': {'minPercent': 0, 'maxPercent': 1, 'lut': 'Grayscale'}, 'display': True }, 
         ]
         if with_help:
-            images.append({ 'name': 'segmentation', 'file': phase_path / 'labelExpert3b_phase2.nii.gz', 'parameters': {'minPercent': 0, 'maxPercent': 1, 'lut': 'Green'}, 'display': True })
+            images.append({ 'name': 'segmentation', 'file': str(patient_relative / 'segmentation.nii.gz'), 'parameters': {'minPercent': 0, 'maxPercent': 1, 'lut': 'Green'}, 'display': True })
 
         session_task['patients'].append({
             'name': patient_name, 		                    # Each patient name must be unique, required to be able to retrieve the patient for later processes
             'images': images,								# The list of images for the patient
-            'clinical_case': phase_path / 'clinical_case.pdf',
-            'report': phase_path / 'report.txt',
+            'clinical_case': str(patient_relative / 'clinical_case.pdf'),
+            'report': str(patient_relative / 'report.txt'),
         })
 
         if not similar_patients:
@@ -67,6 +68,7 @@ for patient in patients:
 
 # Save the task	
 for n, session_task in enumerate([session1_task, session2_task]):
+    random.shuffle(session1_task['patients'])
     with open(str(task_path / f'task_session{n+1}.json'), 'w') as f:
         json.dump(session_task, f, indent=4)
 
