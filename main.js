@@ -441,7 +441,8 @@ let resize_viewer = (container) => {
 
     let container_ratio = container.width / container.height
     
-    let side_by_side = !papaya_container0.classList.contains('hide')
+    // let side_by_side = !papaya_container0.classList.contains('hide')
+    let side_by_side = true
     if(side_by_side) {
 
 
@@ -618,12 +619,12 @@ let toggle_crosshairs = () => {
 document.addEventListener('DOMContentLoaded', function (event) {
     let papaya_container0 = document.getElementById('papaya-container0')
 
-    let side_by_side = localStorage.getItem('side-by-side')
-    if (side_by_side == 'true') {
-        papaya_container0.classList.remove('hide')
-    } else {
-        papaya_container0.classList.add('hide')
-    }
+    // let side_by_side = localStorage.getItem('side-by-side')
+    // if (side_by_side == 'true') {
+    //     papaya_container0.classList.remove('hide')
+    // } else {
+    //     papaya_container0.classList.add('hide')
+    // }
 
     resize_viewer()
 
@@ -634,16 +635,16 @@ document.addEventListener('DOMContentLoaded', function (event) {
         })
     }
     
-    let side_by_side_button = document.getElementById('side-by-side')
-    side_by_side_button.addEventListener('click', () => {
-        if(papaya_container0.classList.contains('hide')) {
-            papaya_container0.classList.remove('hide')
-        } else {
-            papaya_container0.classList.add('hide')
-        }
-        localStorage.setItem('side-by-side', !papaya_container0.classList.contains('hide'))
-        resize_viewer()
-    })
+    // let side_by_side_button = document.getElementById('side-by-side')
+    // side_by_side_button.addEventListener('click', () => {
+    //     if(papaya_container0.classList.contains('hide')) {
+    //         papaya_container0.classList.remove('hide')
+    //     } else {
+    //         papaya_container0.classList.add('hide')
+    //     }
+    //     localStorage.setItem('side-by-side', !papaya_container0.classList.contains('hide'))
+    //     resize_viewer()
+    // })
 
     // let load_patients_data = document.getElementById('load_patients_data')
     // load_patients_data.onchange = function () {
@@ -656,16 +657,16 @@ document.addEventListener('DOMContentLoaded', function (event) {
     //     })
     // }
 
-    let load_task_description = document.getElementById('load_task_description')
-    load_task_description.onchange = function () {
-        if (this.files.length == 0) {
-            return
-        }
-        let file = this.files[0]
-        let file_reader = new FileReader();
-        file_reader.onload = (event) => load_task(event.target.result)
-        file_reader.readAsText(file, 'UTF-8')
-    }
+    // let load_task_description = document.getElementById('load_task_description')
+    // load_task_description.onchange = function () {
+    //     if (this.files.length == 0) {
+    //         return
+    //     }
+    //     let file = this.files[0]
+    //     let file_reader = new FileReader();
+    //     file_reader.onload = (event) => load_task(event.target.result)
+    //     file_reader.readAsText(file, 'UTF-8')
+    // }
 
     let load_archive = document.getElementById('load_archive')
 
@@ -749,13 +750,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
         grid.gridOptions.api.selectIndex(current_row)
     })
 
-    let go_to_patient_button = document.getElementById('go-to-patient')
-    go_to_patient_button.addEventListener('click', () => {
-        go_to_patient(patients[current_patient_index])
-    })
+    // let go_to_patient_button = document.getElementById('go-to-patient')
+    // go_to_patient_button.addEventListener('click', () => {
+    //     go_to_patient(patients[current_patient_index])
+    // })
 
-    let toggle_crosshairs_button = document.getElementById('toggle-crosshairs')
-    toggle_crosshairs_button.addEventListener('click', toggle_crosshairs)
+    // let toggle_crosshairs_button = document.getElementById('toggle-crosshairs')
+    // toggle_crosshairs_button.addEventListener('click', toggle_crosshairs)
 });
 
 // // Draw test
