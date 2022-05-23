@@ -33,41 +33,41 @@ let hide_loader = () => {
     loader.classList.add('hide')
 }
 
-// let create_checkbox = (name, image_index, visible) => {
-//     let container = document.getElementById('toggle-visibility-buttons')
+let create_checkbox = (name, image_index, visible) => {
+    let container = document.getElementById('toggle-visibility-buttons')
 
-//     {/* <div>
-//         <label for='checkbox_name'>name</label>
-//         <input type='checkbox' name='name' id='checkbox_name'>
-//     </div> */}
+    {/* <div>
+        <label for='checkbox_name'>name</label>
+        <input type='checkbox' name='name' id='checkbox_name'>
+    </div> */}
 
-//     let div = document.createElement('div');
-//     div.classList.add('checkbox')
-//     let label = document.createElement('label');
-//     label.setAttribute('for', 'checkbox_' + name)
-//     label.innerText = name
-//     let input = document.createElement('input');
-//     input.setAttribute('type', 'checkbox')
-//     input.setAttribute('id', 'checkbox_' + name)
-//     input.setAttribute('name', name)
-//     input.checked = visible
-//     input.disabled = true
-//     div.appendChild(input)
-//     div.appendChild(label)
-//     container.appendChild(div);
+    let div = document.createElement('div');
+    div.classList.add('checkbox')
+    let label = document.createElement('label');
+    label.setAttribute('for', 'checkbox_' + name)
+    label.innerText = name
+    let input = document.createElement('input');
+    input.setAttribute('type', 'checkbox')
+    input.setAttribute('id', 'checkbox_' + name)
+    input.setAttribute('name', name)
+    input.checked = visible
+    input.disabled = true
+    div.appendChild(input)
+    div.appendChild(label)
+    container.appendChild(div);
 
-//     input.addEventListener('change', (event) => {
-//         if(event.target.checked) {
-//             if(image_index < papayaContainers[1].viewer.screenVolumes.length || papayaContainers[1].viewer.loadingVolume != null) {
-//                 papaya.Container.showImage(1, image_index)
-//             }
-//         } else {
-//             if(image_index < papayaContainers[1].viewer.screenVolumes.length || papayaContainers[1].viewer.loadingVolume != null) {
-//                 papaya.Container.hideImage(1, image_index)
-//             }
-//         }
-//     })
-// }
+    input.addEventListener('change', (event) => {
+        if(event.target.checked) {
+            if(image_index < papayaContainers[1].viewer.screenVolumes.length || papayaContainers[1].viewer.loadingVolume != null) {
+                papaya.Container.showImage(1, image_index)
+            }
+        } else {
+            if(image_index < papayaContainers[1].viewer.screenVolumes.length || papayaContainers[1].viewer.loadingVolume != null) {
+                papaya.Container.hideImage(1, image_index)
+            }
+        }
+    })
+}
 
 // let create_toggle_button = (button_name, image_index, visible) => {
 //     let container = document.getElementById('toggle-visibility-buttons')
@@ -121,7 +121,9 @@ let load_patient_viewer = (images, image_parameters, patient, patient_index) => 
         let display_name = image_parameter.name || file_name.split('/').at(-1)
         loaded_images.push({ name: image_name, file_name: file_name, index: image_index, display_name: display_name })
         params[image_name] = parameters
-        create_checkbox(display_name, image_index, image_parameter.display)
+        if(display_name == 'segmentation') {
+            create_checkbox(display_name, image_index, image_parameter.display)
+        }
         image_parameter.image_index = image_index
         image_index++
     }
@@ -153,8 +155,8 @@ let load_patient_viewer = (images, image_parameters, patient, patient_index) => 
         // papayaContainers[0].viewer.drawViewer(true, false);
     }
 
-    let description = document.getElementById('description')
-    description.innerText = `${patient['name']} - ${patient_index + 1}/${patients.length}`
+    // let description = document.getElementById('description')
+    // description.innerText = `${patient['name']} - ${patient_index + 1}/${patients.length}`
     
     papaya.Container.resetViewer(1, params);
 
@@ -168,6 +170,8 @@ let load_patient_viewer = (images, image_parameters, patient, patient_index) => 
     papaya.Container.resetViewer(0, params);
 
     hide_loader()
+
+    patient.start_time = Date.now()
 
     // if (!initialized) {
     //     initialized = true;
@@ -262,6 +266,9 @@ let patient_location_to_voxel_coordinates = (loc) => {
 }
 
 let go_to_patient = (patient) => {
+    if(!patient['location_voxel']) {
+        return
+    }
     let loc = patient_location_to_voxel_coordinates(patient['location_voxel'])
     console.log(loc)
     go_to_voxel_coordinates(loc)
@@ -274,6 +281,17 @@ let capitalize_first_letter = (string) => {
 }
 
 let load_patient = (i) => {
+    // compute current patient duration
+
+    let patient = patients[current_patient_index]
+    if(patient != null) {
+        if(patient.duration == null) {
+            patient.duration = 0
+        }
+        patient.duration += Date.now() - patient.start_time
+        console.log('patient duration:', patient.duration)
+    }
+
     current_patient_index = i;
     if (current_patient_index < 0) {
         current_patient_index = patients.length - 1;
@@ -282,8 +300,11 @@ let load_patient = (i) => {
         current_patient_index = 0;
     }
 
-    let patient = patients[current_patient_index]
-    
+    patient = patients[current_patient_index]
+
+    let answer_input = document.getElementById('answer')
+    answer_input.value = patient.answer || ''
+    patient.start_time = Date.now()
 
     let image_descriptions = patient['images']
 
@@ -298,11 +319,11 @@ let load_patient = (i) => {
         }
     }
 
-    let description = document.getElementById('description')
+    // let description = document.getElementById('description')
 
     if (!need_to_load) {
         go_to_patient(patient)
-        description.innerText = `${patient['name']} - ${current_patient_index + 1}/${patients.length}`
+        // description.innerText = `${patient['name']} - ${current_patient_index + 1}/${patients.length}`
         return
     }
 
@@ -311,7 +332,7 @@ let load_patient = (i) => {
     // }
 
 
-    description.innerText = 'loading ' + patient['name'] + '...'
+    // description.innerText = 'loading ' + patient['name'] + '...'
     
     let visibility_checkboxes = document.getElementById('toggle-visibility-buttons')
     visibility_checkboxes.replaceChildren();
@@ -325,7 +346,7 @@ let load_patient = (i) => {
         }
         ni++
         
-        let file_name = archive != null ? Object.keys(archive.files).find((f) => f.split('/').at(-1) == image_description.file) : image_description.file
+        let file_name = archive != null ? Object.keys(archive.files).find((f) => f == image_description.file) : image_description.file
 
         image_names.push(file_name)
         image_parameters.push({ name: image_description.name, file_name: file_name, parameters: image_description.parameters, display: image_description.display })
@@ -341,6 +362,19 @@ let load_patient = (i) => {
     }
     let promises = image_names.map((image_name) => { return archive.file(image_name).async('base64')} )
     Promise.all(promises).then((images) => load_patient_viewer(images, image_parameters, patient, current_patient_index))
+
+    let patient_name = patient['name']
+
+    archive.file(patient_name + '/report.pdf').async('blob').then((content)=> {
+        let report = document.getElementById('report')
+        report.src = URL.createObjectURL(content.slice(0, content.size, 'application/pdf'))
+        report.classList.remove('hide')
+    })
+
+    archive.file(patient_name + '/clinical_case.txt').async('string').then((text)=> {
+        let clinical_case = document.getElementById('clinical_case')
+        clinical_case.innerText = text
+    })
 }
 
 // let create_table = () => {
@@ -512,12 +546,13 @@ window.addEventListener('resize', function (event) {
 })
 
 let load_patients = (p) => {
-    patients = l
+    patients = p
     if (patients.length > 0) {
         load_from_local_storage()
         let viewer_container = document.getElementById('viewer-container')
         viewer_container.classList.remove('hide')
         // create_table()
+        load_patient(0)
         resize_viewer()
         // grid.gridOptions.api.selectIndex(0)
     } else {
@@ -578,26 +613,32 @@ let load_from_local_storage = ()=> {
     let patients_string = localStorage.getItem(task != null && task.name ? task.name : 'patients')
     if(patients_string != null && patients_string.length > 0) {
         let stored_patients = JSON.parse(patients_string)
-        let stored_patient_found = stored_patients.findIndex((sl)=> patients.findIndex((l)=> l.name == sl.name) >= 0) >= 0
-        if(stored_patient_found) {
-            for(let patient of patients) {         
-                let stored_patient_index = stored_patients.findIndex((l)=> l.name == patient.name)
-                if(stored_patient_index < 0 || stored_patient_index >= stored_patients.length) {
-                    continue
-                }
-                let stored_patient = stored_patients[stored_patient_index]
-                if (task.fields != null) {
-                    for (let field of task.fields) {
-                        let field_name = field.field || field.name
-                        if(field.editable) {
-                            patient[field_name] = stored_patient[field_name]
-                        }
-                    }
-                }
-                patient.comment = stored_patient.comment
-                patient.valid = stored_patient.valid
-            }
+        // if stored patients are not the same as the current patients, overwrite the current patients
+        if(stored_patients.length != patients.length) {
+            alert('The stored patients are not the same as the patients in the file!')
+            return
         }
+        patients = stored_patients
+        // let stored_patient_found = stored_patients.findIndex((sl)=> patients.findIndex((l)=> l.name == sl.name) >= 0) >= 0
+        // if(stored_patient_found) {
+        //     for(let patient of patients) {         
+        //         let stored_patient_index = stored_patients.findIndex((l)=> l.name == patient.name)
+        //         if(stored_patient_index < 0 || stored_patient_index >= stored_patients.length) {
+        //             continue
+        //         }
+        //         let stored_patient = stored_patients[stored_patient_index]
+        //         if (task.fields != null) {
+        //             for (let field of task.fields) {
+        //                 let field_name = field.field || field.name
+        //                 if(field.editable) {
+        //                     patient[field_name] = stored_patient[field_name]
+        //                 }
+        //             }
+        //         }
+        //         patient.comment = stored_patient.comment
+        //         patient.valid = stored_patient.valid
+        //     }
+        // }
     }
 }
 
@@ -671,6 +712,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
     let load_archive = document.getElementById('load_archive')
 
     load_archive.onchange = function () {
+        // hide #load_buttons
+        let load_buttons = document.getElementById('load_buttons')
+        load_buttons.classList.add('hide')
         if (this.files.length == 0) {
             return
         }
@@ -692,6 +736,20 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 }
             })
     };
+
+    // on #answer input change: change patients and save it in local storage
+    let answer_input = document.getElementById('answer')
+    answer_input.onchange = function () {
+        if (this.value.length == 0) {
+            return
+        }
+        let answer = this.value
+        let patient = patients[current_patient_index]
+        patient.answer = answer
+        save_in_local_storage()
+    }
+    
+
 
     // let load_files = document.getElementById('load_files')
 
@@ -718,7 +776,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     let save = document.getElementById('save');
     save.addEventListener('click', () => {
-        // task.patient = patients
+        task.patients = patients
         let patients_string = JSON.stringify(task, null, '\t')
 
         var data_string = 'data:text/json;charset=utf-8,' + encodeURIComponent(patients_string);
@@ -732,22 +790,34 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     let prev_button = document.getElementById('prev')
     prev_button.addEventListener('click', () => {
-        let selected_nodes = grid.gridOptions.api.getSelectedNodes()
-        let current_row = selected_nodes.length > 0 && selected_nodes[0].displayed ? selected_nodes[0].rowIndex - 1 : 1
-        if (current_row < 0) {
-            current_row = grid.gridOptions.api.getDisplayedRowCount() - 1;
+        // let selected_nodes = grid.gridOptions.api.getSelectedNodes()
+        // let current_row = selected_nodes.length > 0 && selected_nodes[0].displayed ? selected_nodes[0].rowIndex - 1 : 1
+        // if (current_row < 0) {
+        //     current_row = grid.gridOptions.api.getDisplayedRowCount() - 1;
+        // }
+        // grid.gridOptions.api.selectIndex(current_row)
+        if(current_patient_index > 0) {
+            load_patient(current_patient_index - 1)
+            if(current_patient_index == 0) {
+                prev_button.disabled = true
+            }
         }
-        grid.gridOptions.api.selectIndex(current_row)
     })
 
     let next_button = document.getElementById('next')
     next_button.addEventListener('click', () => {
-        let selected_nodes = grid.gridOptions.api.getSelectedNodes()
-        let current_row = selected_nodes.length > 0 && selected_nodes[0].displayed ? grid.gridOptions.api.getSelectedNodes()[0].rowIndex + 1 : -1
-        if (current_row >= grid.gridOptions.api.getDisplayedRowCount()) {
-            current_row = 0;
+        // let selected_nodes = grid.gridOptions.api.getSelectedNodes()
+        // let current_row = selected_nodes.length > 0 && selected_nodes[0].displayed ? grid.gridOptions.api.getSelectedNodes()[0].rowIndex + 1 : -1
+        // if (current_row >= grid.gridOptions.api.getDisplayedRowCount()) {
+        //     current_row = 0;
+        // }
+        // grid.gridOptions.api.selectIndex(current_row)
+        if(current_patient_index < patients.length - 1) {
+            load_patient(current_patient_index + 1)
+            if(current_patient_index == patients.length - 1) {
+                next_button.disabled = true
+            }
         }
-        grid.gridOptions.api.selectIndex(current_row)
     })
 
     // let go_to_patient_button = document.getElementById('go-to-patient')

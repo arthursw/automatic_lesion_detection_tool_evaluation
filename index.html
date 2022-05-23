@@ -124,12 +124,16 @@
 
         </div>
 
-        <embed id="report" src="" width="800px" height="2100px" />
+        <div id="toggle-visibility-buttons">
+        </div>
+
+        <!-- <embed id="report" class="hide" src="" width="800px" height="2100px" /> -->
+        <iframe id="report" class="hide" src="" width="100%" height="1000px" ></iframe>
 
         <div id="clinical_case"></div>
 
-        <div id="answer">
-            <input type="text">
+        <div id="answer_container">
+            <input type="text" id="answer">
         </div>
 
         <div class="navigation">
@@ -140,7 +144,7 @@
         
     </div>
 
-    <div id='load buttons'>
+    <div id='load_buttons'>
         <div>
             <label for="load_archive">Ouvrir l'archive:</label> <input type=file id="load_archive" accept="application/zip" onclick="this.value=null;">
             <!-- or -->
