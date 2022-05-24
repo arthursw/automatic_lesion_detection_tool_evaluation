@@ -299,6 +299,14 @@ let load_patient = (i) => {
     if (current_patient_index >= patients.length) {
         current_patient_index = 0;
     }
+    let prev_button = document.getElementById('prev')
+    let next_button = document.getElementById('next')
+    prev_button.disabled = current_patient_index == 0
+    next_button.disabled = current_patient_index == patients.length - 1
+
+    // set #patient_number to "Patient {index} of {number}"
+    let patient_number = document.getElementById('patient_number')
+    patient_number.innerHTML = 'Patient ' + (current_patient_index + 1) + ' sur ' + patients.length
 
     patient = patients[current_patient_index]
 
@@ -823,9 +831,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
         // grid.gridOptions.api.selectIndex(current_row)
         if(current_patient_index > 0) {
             load_patient(current_patient_index - 1)
-            if(current_patient_index == 0) {
-                prev_button.disabled = true
-            }
         }
     })
 
@@ -839,9 +844,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
         // grid.gridOptions.api.selectIndex(current_row)
         if(current_patient_index < patients.length - 1) {
             load_patient(current_patient_index + 1)
-            if(current_patient_index == patients.length - 1) {
-                next_button.disabled = true
-            }
         }
     })
 
