@@ -13,7 +13,7 @@ var params = [];
 
 params['images'] = [];
 
-let current_patient_index = 0;
+let current_patient_index = -1;
 
 let archive = null;
 let image_files = null;
@@ -302,8 +302,8 @@ let load_patient = (i) => {
 
     patient = patients[current_patient_index]
 
-    let answer_input = document.getElementById('answer')
-    answer_input.value = patient.answer || ''
+    let comment_area = document.getElementById('comment')
+    comment_area.value = patient.comment || ''
     patient.start_time = Date.now()
 
     let image_descriptions = patient['images']
@@ -373,7 +373,31 @@ let load_patient = (i) => {
 
     archive.file(patient_name + '/clinical_case.txt').async('string').then((text)=> {
         let clinical_case = document.getElementById('clinical_case')
-        clinical_case.innerText = text
+        text = text.trimEnd()
+        let questions_index = text.lastIndexOf('\n\n')
+        let body = text.substring(0, questions_index)
+        clinical_case.innerText = body
+        let questions = text.substring(questions_index + 2).split('\n')
+        let questions_container = document.getElementById('questions')
+        // empty question container
+        questions_container.replaceChildren()
+        // create a radio button per question
+        for(let question of questions) {
+            let question_container = document.createElement('div')
+            let question_label = document.createElement('label')
+            let question_input = document.createElement('input')
+            question_input.type = 'radio'
+            question_input.name = 'question'
+            question_input.value = question
+            question_label.appendChild(question_input)
+            question_label.appendChild(document.createTextNode(question))
+            question_container.appendChild(question_label)
+            questions_container.appendChild(question_container)
+            // on question change, update patient.answer
+            question_input.addEventListener('change', (e) => {
+                patient.answer = e.target.value
+            })
+        }
     })
 }
 
@@ -458,6 +482,7 @@ let load_patient = (i) => {
 
 // }
 
+const toolbox_width = 0
 let resize_viewer = (container) => {
 
     let papaya_containers = document.getElementById('papaya-containers')
@@ -469,7 +494,7 @@ let resize_viewer = (container) => {
     
     if (container == null) {
         container = {}
-        container.width = window.innerWidth - 250 - 16
+        container.width = window.innerWidth - toolbox_width - 16
         container.height = window.innerHeight - padding_height
     }
 
@@ -737,15 +762,15 @@ document.addEventListener('DOMContentLoaded', function (event) {
             })
     };
 
-    // on #answer input change: change patients and save it in local storage
-    let answer_input = document.getElementById('answer')
-    answer_input.onchange = function () {
+    // on #comment textarea change: change patients and save it in local storage
+    let comment_area = document.getElementById('comment')
+    comment_area.onchange = function () {
         if (this.value.length == 0) {
             return
         }
-        let answer = this.value
+        let comment = this.value
         let patient = patients[current_patient_index]
-        patient.answer = answer
+        patient.comment = comment
         save_in_local_storage()
     }
     

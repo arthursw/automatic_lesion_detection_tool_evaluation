@@ -1,33 +1,12 @@
 import random
 import json
 from pathlib import Path
+
+from requests import session
 import SimpleITK as sitk
 import shutil
 
-task_path = Path('/home/amasson/data/evaluation/new_structure')
-
-import os
-import zipfile
-
-def add_symlink(zf, link, target, permissions=0o777):
-    permissions |= 0xA000
-
-    zi = zipfile.ZipInfo(link)
-    zi.create_system = 3
-    zi.external_attr = permissions << 16
-    zf.writestr(zi, target)
-
-
-zf = zipfile.ZipFile(task_path.parent / f'{task_path.name}5.zip', 'w')
-for dirname, subdirs, files in os.walk(task_path):
-    zf.write(dirname)
-    for filename in files:
-        if os.path.islink(os.path.join(dirname, filename)):
-            add_symlink(zf, os.path.join(dirname, filename), os.path.join(dirname, 'patient1'))
-        else:
-            zf.write(os.path.join(dirname, filename))
-
-zf.close()
+task_path = Path('/home/amasson/data/evaluation/session1')
 
 # task_archive_path = task_path.parent / f'{task_path.name}_archive'
 
@@ -46,8 +25,9 @@ session2_task = { 'patients': [], 'fields': fields }
 patients = sorted(list(task_path.iterdir()))
 n_patients = len(patients)
 
-total_similar_patients = 6
-total_similar_patients_with_help = total_similar_patients // 2
+total_duplicated_patients = 3
+patients_session1_with_help = []
+patients_session2_without_help = []
 
 n = 0
 
@@ -57,8 +37,7 @@ random.seed(0)
 for patient in patients:
     print(patient.name)
 
-    similar_patients = n < total_similar_patients
-    with_help = n < total_similar_patients_with_help if similar_patients else random.choice([True, False])
+    with_help = random.choice([True, False])
     n += 1
     
     for session_task in [session1_task, session2_task]:
@@ -79,21 +58,35 @@ for patient in patients:
         if with_help:
             images.append({ 'name': 'segmentation', 'file': str(patient_relative / 'segmentation.nii.gz'), 'parameters': {'minPercent': 0, 'maxPercent': 1, 'lut': 'Green Overlay'}, 'display': True })
 
-        session_task['patients'].append({
+        patient_data = {
             'name': patient_name, 		                    # Each patient name must be unique, required to be able to retrieve the patient for later processes
             'images': images,								# The list of images for the patient
             'clinical_case': str(patient_relative / 'clinical_case.txt'),
             'report': str(patient_relative / 'report.pdf'),
-        })
+        }
+        session_task['patients'].append(patient_data)
 
-        if not similar_patients:
-            with_help = not with_help
+        if with_help and len(patients_session1_with_help) < total_duplicated_patients and session_task == session1_task:
+            patients_session1_with_help.append(patient_data)
+        if not with_help and len(patients_session2_without_help) < total_duplicated_patients and session_task == session2_task:
+            patients_session2_without_help.append(patient_data)
 
-# Save the task	
+        with_help = not with_help
+
+for patient in patients_session1_with_help:
+    session1_task['patients'].append(patient)
+for patient in patients_session2_without_help:
+    session2_task['patients'].append(patient)
+
+shutil.copytree(task_path, task_path.parent / 'session2')
+
+# Save the tasks and make sessions archive
 for n, session_task in enumerate([session1_task, session2_task]):
-    random.shuffle(session1_task['patients'])
-    with open(str(task_path / f'task_session{n+1}.json'), 'w') as f:
+    random.shuffle(session_task['patients'])
+    
+    session_path = task_path.parent / f'session{n+1}'
+
+    with open(str(session_path / f'task_session{n+1}.json'), 'w') as f:
         json.dump(session_task, f, indent=4)
 
-# Archive the task
-shutil.make_archive(str(task_path.parent / f'{task_path.name}'), 'zip', str(task_path))
+    shutil.make_archive(str(session_path), 'zip', str(session_path))
