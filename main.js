@@ -406,6 +406,16 @@ let load_patient = (i) => {
                 patient.answer = e.target.value
             })
         }
+        // select the choice corresponding to patient.answer if any
+        let answer = patient.answer
+        if(answer != null) {
+            let question_inputs = questions_container.querySelectorAll('input')
+            for(let question_input of question_inputs) {
+                if(question_input.value == answer) {
+                    question_input.checked = true
+                }
+            }
+        }
     })
 }
 

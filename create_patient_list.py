@@ -19,8 +19,8 @@ fields = [
 # Parmis les 6 : 3 avec aide, 3 sans.
 
 # This is the task
-session1_task = { 'patients': [], 'fields': fields }
-session2_task = { 'patients': [], 'fields': fields }
+session1_task = { 'patients': [], 'fields': fields, 'name': 'session1' }
+session2_task = { 'patients': [], 'fields': fields, 'name': 'session2' }
 
 patients = sorted(list(task_path.iterdir()))
 n_patients = len(patients)
@@ -35,6 +35,7 @@ random.seed(0)
 
 # For all patients: extract the patients and add them to the task
 for patient in patients:
+    if not patient.is_dir(): continue
     print(patient.name)
 
     with_help = random.choice([True, False])
@@ -78,7 +79,7 @@ for patient in patients_session1_with_help:
 for patient in patients_session2_without_help:
     session2_task['patients'].append(patient)
 
-shutil.copytree(task_path, task_path.parent / 'session2')
+# shutil.copytree(task_path, task_path.parent  / 'session2')
 
 # Save the tasks and make sessions archive
 for n, session_task in enumerate([session1_task, session2_task]):
