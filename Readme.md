@@ -1,12 +1,10 @@
 # Evaluation tool
 
-A nice tool to evaluate the benefits of using a patient detection tool.
+A nice tool to evaluate the benefits of using an automatic lesion detection tool.
 
 ## Usage
 
 ### User interfaces
-
-![patient Viewer Screenshot](patientViewer.png)
 
 The mouse enables to navigate in the image (click and drag on the different slices), as the arrow keys and the Page Up / Page Down keys.
 
@@ -32,6 +30,20 @@ Papaya shortcuts (help menu > show keyboard reference):
 ```
 
 ### Create a task file to view a database
+
+The task folder structure must be the following:
+
+```
+/path/to/session1
+├── patient1
+│   ├── clinical_case.txt
+│   ├── flair1.nii.gz
+│   ├── flair2.nii.gz
+│   ├── report.pdf
+│   └── segmentation.nii.gz
+├── patient2
+│   ├── ...
+```
 
 The `create_patient_list.py` script in this repository is an example to create a json task file.
 

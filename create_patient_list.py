@@ -1,12 +1,20 @@
 import random
 import json
 from pathlib import Path
+import shuti
+import argparse
 
-from requests import session
-import SimpleITK as sitk
-import shutil
 
-task_path = Path('/home/amasson/data/evaluation/session1')
+parser = argparse.ArgumentParser(
+    prog=__file__,
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    description="""Create an evaluation task""")
+
+parser.add_argument('-t', '--task_folder', required=True, help='Path to the patients folder. See the file structure in Readme.md.')
+
+args = parser.parse_args()
+
+task_path = Path(args.task_folder)
 
 # task_archive_path = task_path.parent / f'{task_path.name}_archive'
 
@@ -86,6 +94,8 @@ for n, session_task in enumerate([session1_task, session2_task]):
     random.shuffle(session_task['patients'])
     
     session_path = task_path.parent / f'session{n+1}'
+
+    # session_path.mkdir(exist_ok=True, parents=True)
 
     with open(str(session_path / f'task_session{n+1}.json'), 'w') as f:
         json.dump(session_task, f, indent=4)
